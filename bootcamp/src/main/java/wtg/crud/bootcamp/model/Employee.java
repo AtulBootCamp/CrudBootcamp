@@ -12,10 +12,12 @@ public class Employee {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+
+	@Column(name = "employee_name")
 	private String empName;
 
 
-	@OneToMany(mappedBy = "employee")
+	@OneToMany(mappedBy = "employee",fetch = FetchType.EAGER)
 	private Set<EmployeeDepartment> employeeDepartments = new HashSet<>();
 
 	public Integer getId() {

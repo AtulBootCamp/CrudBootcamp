@@ -11,12 +11,17 @@ public class Department {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
+
+	@Column(name = "department_name")
 	private String depttName;
+
+	@Column(name = "is_read_only")
 	private Boolean isReadOnly;
 
+	@Column(name = "is_mandatory")
 	private Boolean isMandatory;
 
-	@OneToMany(mappedBy = "department")
+	@OneToMany(mappedBy = "department",fetch = FetchType.EAGER)
 	private Set<EmployeeDepartment> employeeDepartments = new HashSet<>();
 
 	public Integer getId() {
@@ -59,14 +64,5 @@ public class Department {
 		this.employeeDepartments = employeeDepartments;
 	}
 
-	@Override
-	public String toString() {
-		return "Department{" +
-				"id=" + id +
-				", depttName='" + depttName + '\'' +
-				", isReadOnly=" + isReadOnly +
-				", isMandatory=" + isMandatory +
-				", employeeDepartments=" + employeeDepartments +
-				'}';
-	}
+
 }

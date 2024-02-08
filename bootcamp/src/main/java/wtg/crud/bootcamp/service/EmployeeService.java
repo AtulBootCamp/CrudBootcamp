@@ -31,8 +31,11 @@ public class EmployeeService {
 
     }
 
-    public Employee getEmployeeById(Integer id) {
-        return employeeRepository.findById(id).orElse(null);
+    public Employee getEmployeeById(Integer employeeId) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if(employeeOptional.isEmpty())
+            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
+        return employeeOptional.get();
 
     }
 
@@ -41,7 +44,6 @@ public class EmployeeService {
         Employee savedEmployee = employeeRepository.save(employee);
 
         Department mandatoryDepartment = this.departmentRepository.findByIsMandatory(true);
-        System.out.println(mandatoryDepartment);
 
         EmployeeDepartment mandatoryEmployeeDepartments=new EmployeeDepartment(employee,mandatoryDepartment);
 
@@ -56,16 +58,21 @@ public class EmployeeService {
 
     }
 
-    public void deleteEmployee(Integer id) {
-        Employee employee = this.employeeRepository.findById(id).get();
-        List<EmployeeDepartment> employeeDepartments = this.employeeDepartmentRepository.findByEmployee(employee);
+    public void deleteEmployee(Integer employeeId) {
+        Optional<Employee> employeeOptional = this.employeeRepository.findById(employeeId);
+        if(employeeOptional.isEmpty())
+            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
+        List<EmployeeDepartment> employeeDepartments = this.employeeDepartmentRepository.findByEmployee(employeeOptional.get());
 
         this.employeeDepartmentRepository.deleteAll(employeeDepartments);
-        employeeRepository.deleteById(id);
+        employeeRepository.deleteById(employeeId);
     }
 
-    public void updateEmployee(Integer id, Employee modifiedEmployee){
-        Employee employeeInDB = this.employeeRepository.findById(id).get();
+    public void updateEmployee(Integer employeeId, Employee modifiedEmployee){
+        
+        this.employeeRepository.findById(employeeId);
+        
+        Employee employeeInDB = this.employeeRepository.findById(employeeId).get();
 
         employeeInDB.setEmpName(modifiedEmployee.getEmpName());
         employeeInDB.setEmployeeDepartments(modifiedEmployee.getEmployeeDepartments());

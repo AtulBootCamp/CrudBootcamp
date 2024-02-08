@@ -1,10 +1,11 @@
 package wtg.crud.bootcamp.service;
 
+import org.springframework.stereotype.Service;
 import wtg.crud.bootcamp.model.EmployeeDepartment;
 import wtg.crud.bootcamp.repository.EmployeeDepartmentRepository;
 
 import java.util.List;
-
+@Service
 public class EmployeeDepartmentService {
     private final EmployeeDepartmentRepository employeeDepartmentRepository;
 
