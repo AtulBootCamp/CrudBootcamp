@@ -3,26 +3,27 @@ package wtg.crud.bootcamp.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wtg.crud.bootcamp.model.Department;
-import wtg.crud.bootcamp.service.DepartmentService;
+import wtg.crud.bootcamp.service.DepartmentServiceImpl;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/department/")
 public class DepartmentController {
 
-    private final DepartmentService departmentService;
+    private final DepartmentServiceImpl departmentService;
 
-    public DepartmentController(DepartmentService departmentService) {
+    public DepartmentController(DepartmentServiceImpl departmentService) {
         this.departmentService = departmentService;
     }
 
     @PostMapping("create")
-    public void createDepartment(@RequestBody Department department) {
-        this.departmentService.addDepartment(department);
+    public Department createDepartment(@RequestBody Department department) {
+        return this.departmentService.addDepartment(department);
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Department> getDepartment(@PathVariable("id") Integer departmentId) {
-
         Department department = this.departmentService.getDepartmentById(departmentId);
         if(department!=null)
             return ResponseEntity.ok(department);
@@ -31,8 +32,8 @@ public class DepartmentController {
     }
 
     @PutMapping("{id}")
-    public void updateDepartment(@PathVariable("id") Integer departmentId, @RequestBody Department department){
-         this.departmentService.updateDepartment(departmentId,department);
+    public Department updateDepartment(@PathVariable("id") Integer departmentId, @RequestBody Department department){
+         return this.departmentService.updateDepartment(departmentId,department);
 
     }
 
@@ -41,6 +42,10 @@ public class DepartmentController {
         this.departmentService.deleteDepartment(departmentId);
     }
 
+    @GetMapping("all")
+    public List<Department> getAllDepartments(){
+        return this.departmentService.getAllDepartments();
+    }
 
 
 }

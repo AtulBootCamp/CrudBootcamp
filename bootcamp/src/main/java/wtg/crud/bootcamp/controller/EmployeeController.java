@@ -3,21 +3,23 @@ package wtg.crud.bootcamp.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wtg.crud.bootcamp.model.Employee;
-import wtg.crud.bootcamp.service.EmployeeService;
+import wtg.crud.bootcamp.service.EmployeeServiceImpl;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/employee/")
 public class EmployeeController {
 
-    private final EmployeeService employeeService;
+    private final EmployeeServiceImpl employeeService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeServiceImpl employeeService) {
         this.employeeService = employeeService;
     }
 
     @PostMapping("create")
-    public void createEmployee(@RequestBody Employee employee) {
-        this.employeeService.createEmployee(employee);
+    public Employee createEmployee(@RequestBody Employee employee) {
+        return this.employeeService.createEmployee(employee);
     }
 
     @GetMapping("{empId}")
@@ -35,7 +37,12 @@ public class EmployeeController {
     }
 
     @PutMapping("{empId}")
-    public void updateEmployee(@PathVariable("empId") Integer empId,@RequestBody Employee employee){
-        this.employeeService.updateEmployee(empId,employee);
+    public Employee updateEmployee(@PathVariable("empId") Integer empId,@RequestBody Employee employee){
+        return this.employeeService.updateEmployee(empId,employee);
+    }
+
+    @GetMapping("all")
+    public List<Employee> getAllEmployees(){
+        return this.employeeService.getAllEmployees();
     }
 }
