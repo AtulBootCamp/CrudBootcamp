@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/department/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class DepartmentController {
 
     private final DepartmentServiceImpl departmentService;
@@ -23,12 +24,8 @@ public class DepartmentController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Department> getDepartment(@PathVariable("id") Integer departmentId) {
-        Department department = this.departmentService.getDepartmentById(departmentId);
-        if(department!=null)
-            return ResponseEntity.ok(department);
-        else
-            return ResponseEntity.notFound().build();
+    public Department getDepartment(@PathVariable("id") Integer departmentId) {
+        return this.departmentService.getDepartmentById(departmentId);
     }
 
     @PutMapping("{id}")

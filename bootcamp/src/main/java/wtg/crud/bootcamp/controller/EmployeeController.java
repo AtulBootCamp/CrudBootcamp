@@ -9,6 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/employee/")
+@CrossOrigin(origins = "http://localhost:4200")
 public class EmployeeController {
 
     private final EmployeeServiceImpl employeeService;
@@ -23,12 +24,8 @@ public class EmployeeController {
     }
 
     @GetMapping("{empId}")
-    public ResponseEntity<Employee> getEmployee(@PathVariable("empId") Integer empId){
-        Employee employee = this.employeeService.getEmployeeById(empId);
-        if(employee!=null)
-            return ResponseEntity.ok(employee);
-        else
-            return ResponseEntity.notFound().build();
+    public Employee getEmployee(@PathVariable("empId") Integer empId){
+        return this.employeeService.getEmployeeById(empId);
     }
 
     @DeleteMapping("{empId}")

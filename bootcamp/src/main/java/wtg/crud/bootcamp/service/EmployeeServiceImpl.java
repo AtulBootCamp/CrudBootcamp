@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import wtg.crud.bootcamp.exceptions.EmployeeNotFoundException;
 import wtg.crud.bootcamp.model.Department;
 import wtg.crud.bootcamp.model.Employee;
+import wtg.crud.bootcamp.model.EmployeeDepartment;
 import wtg.crud.bootcamp.repository.DepartmentRepository;
 import wtg.crud.bootcamp.repository.EmployeeDepartmentRepository;
 import wtg.crud.bootcamp.repository.EmployeeRepository;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+
 public class EmployeeServiceImpl implements EmployeeService{
 
     private final EmployeeRepository employeeRepository;
@@ -28,29 +30,17 @@ public class EmployeeServiceImpl implements EmployeeService{
         this.employeeDepartmentRepository=employeeDepartmentRepository;
 
     }
-
-    @Override
-    public Employee getEmployeeById(Integer employeeId) {
-        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
-        if(employeeOptional.isEmpty())
-            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
-        return employeeOptional.get();
-
-    }
-
     @Override
     public Employee createEmployee(Employee employee) {
 
         Set<Department> departments = employee.getDepartments();
 
         List<Department> allDepartments = (List<Department>) departmentRepository.findAll();
-
         Set<Department> mandatoryDepartments=allDepartments.stream().filter(Department::getMandatory).collect(Collectors.toSet());
+
         departments.addAll(mandatoryDepartments);
 
-        Employee savedEmployee = employeeRepository.save(employee);
-
-        return savedEmployee;
+        return employeeRepository.save(employee);
     }
 
     @Override
@@ -59,7 +49,20 @@ public class EmployeeServiceImpl implements EmployeeService{
         if(employeeOptional.isEmpty())
             throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
 
+        List<EmployeeDepartment> allEmployeeDepartments = (List<EmployeeDepartment>) employeeDepartmentRepository.findAll();
+        List<EmployeeDepartment> collect = allEmployeeDepartments.stream().filter(e -> e.getEmployee().getId().equals(employeeOptional.get().getId())).collect(Collectors.toList());
+        employeeDepartmentRepository.deleteAll(collect);
+
         this.employeeRepository.deleteById(employeeId);
+    }
+
+    @Override
+    public Employee getEmployeeById(Integer employeeId) {
+        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
+        if(employeeOptional.isEmpty())
+            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
+
+        return employeeOptional.get();
     }
 
     @Override
@@ -70,8 +73,10 @@ public class EmployeeServiceImpl implements EmployeeService{
         if(employeeOptional.isEmpty())
             throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
 
-        return this.employeeRepository.save(modifiedEmployee);
+        Employee employeeInDB = employeeOptional.get();
+        employeeInDB.setEmpName(modifiedEmployee.getEmpName());
 
+        return this.employeeRepository.save(employeeInDB);
     }
 
     @Override

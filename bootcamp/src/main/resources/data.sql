@@ -11,11 +11,8 @@ INSERT INTO Employee (id,employee_name) VALUES
 (102,'Sita'),
 (103,'Gita');
 
--- INSERT INTO map_employee_department (employee_id, department_id) VALUES
--- (100,100),
--- (100,102),
--- (100,103),
--- (102,101),
--- (103,101),
--- (103,102),
--- (104,100)
+INSERT INTO map_employee_department (employee_id, department_id) VALUES
+(100,100),
+(101,100),
+(102,100),
+(103,100)

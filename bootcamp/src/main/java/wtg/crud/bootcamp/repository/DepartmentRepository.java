@@ -6,6 +6,4 @@ import wtg.crud.bootcamp.model.Department;
 
 @Repository
 public interface DepartmentRepository extends CrudRepository<Department,Integer> {
-
-
 }

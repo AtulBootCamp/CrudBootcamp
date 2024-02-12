@@ -11,7 +11,6 @@ read_only BOOLEAN,
 mandatory BOOLEAN
 );
 
-
 create table Map_employee_department(
 employee_id INTEGER,
 department_id INTEGER,

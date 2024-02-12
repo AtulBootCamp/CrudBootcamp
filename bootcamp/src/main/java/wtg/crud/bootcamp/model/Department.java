@@ -25,9 +25,6 @@ public class Department {
 	@Column(name = "mandatory")
 	private Boolean mandatory;
 
-	@JsonIgnore
-	@ManyToMany(mappedBy = "departments",cascade={CascadeType.MERGE,CascadeType.REMOVE})
+	@ManyToMany(mappedBy = "departments",cascade={CascadeType.MERGE},fetch = FetchType.LAZY)
 	private Set<Employee> employee = new HashSet<>();
-
-
 }
