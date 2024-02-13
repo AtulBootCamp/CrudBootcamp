@@ -1,11 +1,15 @@
 
+CREATE SEQUENCE employee_sequence START WITH 1 increment by 1;
+
 create table Employee(
-id INTEGER PRIMARY KEY AUTO_INCREMENT,
+id INTEGER DEFAULT next value for employee_sequence PRIMARY KEY,
 employee_name VARCHAR(255)
 );
 
+CREATE SEQUENCE department_sequence START WITH 1 increment by 1;
+
 create table Department(
-id INTEGER PRIMARY KEY AUTO_INCREMENT,
+id INTEGER DEFAULT next value for department_sequence PRIMARY KEY,
 department_name VARCHAR(255),
 read_only BOOLEAN,
 mandatory BOOLEAN

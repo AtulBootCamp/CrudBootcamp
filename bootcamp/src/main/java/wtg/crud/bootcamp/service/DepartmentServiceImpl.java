@@ -24,26 +24,22 @@ public class DepartmentServiceImpl implements DepartmentService{
 
     @Override
     public Department getDepartmentById(Integer departmentId) {
-        Optional<Department> departmentOptional = this.departmentRepository.findById(departmentId);
-
-        if(departmentOptional.isEmpty())
-            throw new DepartmentNotFoundException("Department Id "+ departmentId + " is not valid");
-
-        return departmentOptional.get();
+        return this.departmentRepository.
+                findById(departmentId).
+                orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
     }
 
     @Override
     public void deleteDepartment(Integer departmentId) {
-        Optional<Department> departmentOptional = this.departmentRepository.findById(departmentId);
-
-        if(departmentOptional.isEmpty())
-            throw new DepartmentNotFoundException("Department Id "+ departmentId + " is not valid");
-
-        Department department = departmentOptional.get();
-
-        if(department.getReadOnly()){
-            throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
-        }
+        this.departmentRepository.
+            findById(departmentId).
+                map(d->{
+                    if(d.getReadOnly()){
+                        throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
+                    }
+                    return d;
+                })
+                .orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
 
         departmentRepository.deleteById(departmentId);
     }
@@ -51,19 +47,16 @@ public class DepartmentServiceImpl implements DepartmentService{
     @Override
     public Department updateDepartment(Integer departmentId, Department modifieddepartment){
 
-        Optional<Department> departmentOptional = this.departmentRepository.findById(departmentId);
+        Department departmentInDB = this.departmentRepository.
+                findById(departmentId).
+                map(d -> {
+                    if (d.getReadOnly()) {
+                        throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
+                    }
+                    return d;
+                })
+                .orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
 
-        if(departmentOptional.isEmpty())
-            throw new DepartmentNotFoundException("Department Id "+ departmentId + " is not valid");
-
-        Department department = departmentOptional.get();
-
-        if(department.getReadOnly()){
-            throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
-        }
-
-        Department departmentInDB=departmentOptional.get();
-        departmentInDB.setId(modifieddepartment.getId());
         departmentInDB.setDepttName(modifieddepartment.getDepttName());
         departmentInDB.setMandatory(modifieddepartment.getMandatory());
         departmentInDB.setReadOnly(modifieddepartment.getReadOnly());

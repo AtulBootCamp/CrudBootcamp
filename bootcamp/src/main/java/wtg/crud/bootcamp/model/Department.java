@@ -13,7 +13,8 @@ import java.util.Set;
 @Data
 public class Department {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "department_sequence_generator")
+	@SequenceGenerator(name = "department_sequence_generator",initialValue = 1,sequenceName = "department_sequence",allocationSize = 1)
 	private Integer id;
 
 	@Column(name = "department_name")

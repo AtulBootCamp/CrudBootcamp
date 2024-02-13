@@ -3,6 +3,7 @@ package wtg.crud.bootcamp.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wtg.crud.bootcamp.model.Employee;
+import wtg.crud.bootcamp.service.EmployeeService;
 import wtg.crud.bootcamp.service.EmployeeServiceImpl;
 
 import java.util.List;
@@ -12,20 +13,20 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class EmployeeController {
 
-    private final EmployeeServiceImpl employeeService;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeServiceImpl employeeService) {
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
     }
 
     @PostMapping("create")
     public Employee createEmployee(@RequestBody Employee employee) {
-        return this.employeeService.createEmployee(employee);
+    return this.employeeService.createEmployee(employee);
     }
 
     @GetMapping("{empId}")
     public Employee getEmployee(@PathVariable("empId") Integer empId){
-        return this.employeeService.getEmployeeById(empId);
+    return this.employeeService.getEmployeeById(empId);
     }
 
     @DeleteMapping("{empId}")

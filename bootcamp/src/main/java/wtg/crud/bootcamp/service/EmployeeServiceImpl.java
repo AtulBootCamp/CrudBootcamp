@@ -35,8 +35,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         Set<Department> departments = employee.getDepartments();
 
-        List<Department> allDepartments = (List<Department>) departmentRepository.findAll();
-        Set<Department> mandatoryDepartments=allDepartments.stream().filter(Department::getMandatory).collect(Collectors.toSet());
+        Set<Department> mandatoryDepartments = departmentRepository.findDepartmentsByMandatory(true);
 
         departments.addAll(mandatoryDepartments);
 
@@ -45,12 +44,11 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public void deleteEmployee(Integer employeeId) {
-        Optional<Employee> employeeOptional = this.employeeRepository.findById(employeeId);
-        if(employeeOptional.isEmpty())
-            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
+        Employee employee = this.employeeRepository.findById(employeeId).
+            orElseThrow(() -> new EmployeeNotFoundException("Employee Id " + employeeId + " is not valid"));
 
         List<EmployeeDepartment> allEmployeeDepartments = (List<EmployeeDepartment>) employeeDepartmentRepository.findAll();
-        List<EmployeeDepartment> collect = allEmployeeDepartments.stream().filter(e -> e.getEmployee().getId().equals(employeeOptional.get().getId())).collect(Collectors.toList());
+        List<EmployeeDepartment> collect = allEmployeeDepartments.stream().filter(e -> e.getEmployee().getId().equals(employee.getId())).collect(Collectors.toList());
         employeeDepartmentRepository.deleteAll(collect);
 
         this.employeeRepository.deleteById(employeeId);
@@ -58,24 +56,16 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public Employee getEmployeeById(Integer employeeId) {
-        Optional<Employee> employeeOptional = employeeRepository.findById(employeeId);
-        if(employeeOptional.isEmpty())
-            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
-
-        return employeeOptional.get();
+        return this.employeeRepository.findById(employeeId).
+            orElseThrow(()->new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid"));
     }
 
     @Override
     public Employee updateEmployee(Integer employeeId, Employee modifiedEmployee){
+        Employee employeeInDB = this.employeeRepository.findById(employeeId).
+            orElseThrow(() -> new EmployeeNotFoundException("Employee Id " + employeeId + " is not valid"));
 
-        Optional<Employee> employeeOptional = this.employeeRepository.findById(employeeId);
-
-        if(employeeOptional.isEmpty())
-            throw new EmployeeNotFoundException("Employee Id "+ employeeId + " is not valid");
-
-        Employee employeeInDB = employeeOptional.get();
         employeeInDB.setEmpName(modifiedEmployee.getEmpName());
-
         return this.employeeRepository.save(employeeInDB);
     }
 

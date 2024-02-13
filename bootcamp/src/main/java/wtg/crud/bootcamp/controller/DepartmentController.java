@@ -1,10 +1,8 @@
 package wtg.crud.bootcamp.controller;
-
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import wtg.crud.bootcamp.model.Department;
+import wtg.crud.bootcamp.service.DepartmentService;
 import wtg.crud.bootcamp.service.DepartmentServiceImpl;
-
 import java.util.List;
 
 @RestController
@@ -12,9 +10,8 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:4200")
 public class DepartmentController {
 
-    private final DepartmentServiceImpl departmentService;
-
-    public DepartmentController(DepartmentServiceImpl departmentService) {
+    private final DepartmentService departmentService;
+    public DepartmentController(DepartmentService departmentService) {
         this.departmentService = departmentService;
     }
 
@@ -30,8 +27,7 @@ public class DepartmentController {
 
     @PutMapping("{id}")
     public Department updateDepartment(@PathVariable("id") Integer departmentId, @RequestBody Department department){
-         return this.departmentService.updateDepartment(departmentId,department);
-
+        return this.departmentService.updateDepartment(departmentId,department);
     }
 
     @DeleteMapping("{id}")
@@ -41,8 +37,6 @@ public class DepartmentController {
 
     @GetMapping("all")
     public List<Department> getAllDepartments(){
-        return this.departmentService.getAllDepartments();
+    return this.departmentService.getAllDepartments();
     }
-
-
 }
