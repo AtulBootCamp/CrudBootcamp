@@ -5,6 +5,7 @@ import org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -13,6 +14,7 @@ import static org.mockito.Mockito.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import wtg.crud.bootcamp.exceptions.DepartmentIsReadOnlyException;
 import wtg.crud.bootcamp.exceptions.DepartmentNotFoundException;
@@ -21,7 +23,8 @@ import wtg.crud.bootcamp.repository.DepartmentRepository;
 
 import java.util.List;
 import java.util.Optional;
-@SpringBootTest
+//@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class DepartmentServiceTest {
 
     private final Integer ID_ONE=1;
@@ -41,8 +44,7 @@ public class DepartmentServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
 
-    @Mock
-    private DepartmentService ref;
+    private DepartmentService underTest;
     @InjectMocks
     private DepartmentServiceImpl concreateRef;
 
@@ -50,16 +52,16 @@ public class DepartmentServiceTest {
     public void setUp(){
         MockitoAnnotations.initMocks(this);
         concreateRef=new DepartmentServiceImpl(departmentRepository);
-        ref=concreateRef;
+        underTest=concreateRef;
     }
 
     @Test
-    public void test_whenAddDepartment_success(){
+    public void test_when_addDepartment_success(){
         Department department = DepartmentFactory.createDepartment(ID_ONE,DEPARTMENT_ORGANISATION,READ_ONLY_TRUE,MANDATORY_TRUE);
 
         when(departmentRepository.save(department)).thenReturn(department);
 
-        Department savedDepartment = ref.addDepartment(department);
+        Department savedDepartment = underTest.addDepartment(department);
 
         assertThat(savedDepartment).isNotNull();
         assertEquals(department, savedDepartment);
@@ -67,23 +69,23 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    public void test_whenGetDepartment_success(){
+    public void test_when_getDepartment_success(){
         Department department = DepartmentFactory.createDepartment(ID_TWO,DEPARTMENT_IT,READ_ONLY_FALSE,MANDATORY_FALSE);
 
         when(departmentRepository.findById(department.getId())).thenReturn(Optional.of(department));
 
-        Department savedDepartment = ref.getDepartmentById(department.getId());
+        Department savedDepartment = underTest.getDepartmentById(department.getId());
 
         assertEquals(department,savedDepartment);
     }
 
     @Test
-    public void test_whenGiven_departmentId_IsWrong_fail(){
+    public void test_when_givenDepartmentId_IsWrong_fail(){
         Department department = DepartmentFactory.createDepartment(ID_THREE,DEPARTMENT_HR,READ_ONLY_FALSE,MANDATORY_FALSE);
 
         when(departmentRepository.findById(department.getId())).thenReturn(Optional.empty());
 
-        assertThrows(DepartmentNotFoundException.class,()->ref.getDepartmentById(department.getId()));
+        assertThrows(DepartmentNotFoundException.class,()->underTest.getDepartmentById(department.getId()));
 
     }
 
@@ -93,7 +95,7 @@ public class DepartmentServiceTest {
 
         when(departmentRepository.findById(department.getId())).thenReturn(Optional.of(department));
 
-        ref.deleteDepartment(department.getId());
+        underTest.deleteDepartment(department.getId());
 
         verify(departmentRepository,times(1)).deleteById(department.getId());
     }
@@ -105,7 +107,7 @@ public class DepartmentServiceTest {
 
         when(departmentRepository.findById(department.getId())).thenReturn(Optional.empty());
 
-        assertThrows(DepartmentNotFoundException.class,()->ref.deleteDepartment(department.getId()));
+        assertThrows(DepartmentNotFoundException.class,()->underTest.deleteDepartment(department.getId()));
 
         verify(departmentRepository,never()).deleteById(department.getId());
     }
@@ -116,7 +118,7 @@ public class DepartmentServiceTest {
 
         when(departmentRepository.findById(department.getId())).thenReturn(Optional.of(department));
 
-        assertThrows(DepartmentIsReadOnlyException.class,()->ref.deleteDepartment(department.getId()));
+        assertThrows(DepartmentIsReadOnlyException.class,()->underTest.deleteDepartment(department.getId()));
 
         verify(departmentRepository,never()).deleteById(department.getId());
     }
@@ -128,7 +130,7 @@ public class DepartmentServiceTest {
         when(departmentRepository.findById(department.getId())).thenReturn(Optional.of(department));
         when(departmentRepository.save(department)).thenReturn(department);
 
-        Department savedDepartment = ref.updateDepartment(department.getId(),department);
+        Department savedDepartment = underTest.updateDepartment(department.getId(),department);
 
         assertEquals(department,savedDepartment);
     }
@@ -142,7 +144,7 @@ public class DepartmentServiceTest {
 
         when(departmentRepository.findAll()).thenReturn(departmentList);
 
-        List<Department> allDepartments = ref.getAllDepartments();
+        List<Department> allDepartments = underTest.getAllDepartments();
 
         assertThat(allDepartments).isEqualTo(departmentList);
         verify(departmentRepository,times(1)).findAll();

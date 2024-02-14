@@ -10,20 +10,12 @@ import java.util.Set;
 public class EmployeeFactory {
 
 
-
-    public static Employee createEmployee(Integer id, String employeeName, Set<Department> departments){
-        Employee employee=new Employee();
+    public static Employee createEmployee(Integer id, String employeeName, Set<Department> departments) {
+        Employee employee = new Employee();
         employee.setId(id);
         employee.setEmpName(employeeName);
         employee.setDepartments(departments);
         return employee;
     }
 
-//    public static Employee createEmployeeWithNonMandatoryDepartments(Integer id, String employeeName, Set<Department> departments){
-//        Employee employee=new Employee();
-//        employee.setId(id);
-//        employee.setEmpName(employeeName);
-//        employee.setDepartments(departments);
-//        return employee;
-//    }
 }

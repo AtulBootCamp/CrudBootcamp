@@ -1,13 +1,18 @@
 
-INSERT INTO Department (department_name, read_only, mandatory) VALUES
-('Organisation', true, true),
-('IT', false, false),
-('Sales', false, false),
-('HR', false, false);
+INSERT INTO DEPARTMENT (ID,NAME, READ_ONLY, MANDATORY) VALUES
+(nextval('DEPARTMENT_SEQUENCE'),'Organisation', true, true),
+(nextval('DEPARTMENT_SEQUENCE'),'IT', false, false),
+(nextval('DEPARTMENT_SEQUENCE'),'Sales', false, false),
+(nextval('DEPARTMENT_SEQUENCE'),'HR', false, false);
 
-INSERT INTO Employee (employee_name) VALUES
-('Ram'),
-('Sham'),
-('Sita'),
-('Gita');
+INSERT INTO EMPLOYEE (ID,NAME) VALUES
+(nextval('EMPLOYEE_SEQUENCE'),'Ram'),
+(nextval('EMPLOYEE_SEQUENCE'),'Sham'),
+(nextval('EMPLOYEE_SEQUENCE'),'Sita'),
+(nextval('EMPLOYEE_SEQUENCE'),'Gita');
 
+INSERT INTO MAP_EMPLOYEE_DEPARTMENT(EMPLOYEE_ID, DEPARTMENT_ID) VALUES
+((SELECT ID FROM EMPLOYEE WHERE NAME = 'Ram'),(SELECT ID FROM DEPARTMENT WHERE NAME='Organisation')),
+((SELECT ID FROM EMPLOYEE WHERE NAME = 'Sham'),(SELECT ID FROM DEPARTMENT WHERE NAME='Organisation')),
+((SELECT ID FROM EMPLOYEE WHERE NAME = 'Sita'),(SELECT ID FROM DEPARTMENT WHERE NAME='Organisation')),
+((SELECT ID FROM EMPLOYEE WHERE NAME = 'Gita'),(SELECT ID FROM DEPARTMENT WHERE NAME='Organisation'))

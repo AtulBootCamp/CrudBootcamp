@@ -2,28 +2,25 @@ package wtg.crud.bootcamp.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import wtg.crud.bootcamp.exceptions.EmployeeNotFoundException;
 import wtg.crud.bootcamp.model.Department;
 import wtg.crud.bootcamp.model.Employee;
 import wtg.crud.bootcamp.repository.DepartmentRepository;
-import wtg.crud.bootcamp.repository.EmployeeDepartmentRepository;
 import wtg.crud.bootcamp.repository.EmployeeRepository;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class EmployeeServiceTest {
 
     public final Integer ID_ONE=1;
@@ -57,40 +54,38 @@ public class EmployeeServiceTest {
     @Mock
     private DepartmentRepository departmentRepository;
 
-    @Mock
-    private EmployeeService ref;
-    @Mock
-    private EmployeeDepartmentRepository employeeDepartmentRepository;
+
+    private EmployeeService underTest;
 
     @InjectMocks
     private EmployeeServiceImpl concreateRef;
 
     @BeforeEach
     public void setUp(){
-        MockitoAnnotations.initMocks(this);
-        concreateRef=new EmployeeServiceImpl(employeeRepository,departmentRepository,employeeDepartmentRepository);
-        ref=concreateRef;
+        concreateRef=new EmployeeServiceImpl(employeeRepository,departmentRepository);
+        underTest=concreateRef;
     }
 
     @Test
-    public void test_CreateEmployee_success(){
+    public void test_when_createEmployee_success(){
 
+        Department departmentOrganisation = DepartmentFactory.createDepartment(DEPARTMENT_ID_ONE, DEPARTMENT_ORGANISATION, READ_ONLY_TRUE, MANDATORY_TRUE);
         Department departmentIT = DepartmentFactory.createDepartment(DEPARTMENT_ID_TWO, DEPARTMENT_IT, READ_ONLY_FALSE, MANDATORY_FALSE);
         Department departmentHR = DepartmentFactory.createDepartment(DEPARTMENT_ID_THREE, DEPARTMENT_HR, READ_ONLY_FALSE, MANDATORY_FALSE);
-        Set<Department> departments=new HashSet<>(List.of(departmentHR,departmentIT));
+        Set<Department> departments=new HashSet<>(List.of(departmentHR,departmentIT,departmentOrganisation));
 
         Employee employee = EmployeeFactory.createEmployee(ID_ONE, EMPLOYEE_RAM, departments);
 
         when(employeeRepository.save(employee)).thenReturn(employee);
 
-        Employee savedEmployee = ref.createEmployee(employee);
+        Employee savedEmployee = underTest.createEmployee(employee);
 
         assertThat(savedEmployee).isNotNull();
         assertThat(savedEmployee).isEqualTo(employee);
     }
 
     @Test
-    public void test_WhenGetEmployee_Success(){
+    public void test_when_getEmployee_Success(){
 
         Department departmentIT = DepartmentFactory.createDepartment(DEPARTMENT_ID_TWO, DEPARTMENT_IT, READ_ONLY_FALSE, MANDATORY_FALSE);
         Department departmentHR = DepartmentFactory.createDepartment(DEPARTMENT_ID_THREE, DEPARTMENT_HR, READ_ONLY_FALSE, MANDATORY_FALSE);
@@ -102,7 +97,7 @@ public class EmployeeServiceTest {
 
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
 
-        Employee savedEmployee = ref.getEmployeeById(employee.getId());
+        Employee savedEmployee = underTest.getEmployeeById(employee.getId());
 
         assertThat(savedEmployee).isNotNull();
         assertThat(savedEmployee).isEqualTo(employee);
@@ -110,17 +105,17 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void test_WhenEmployeeIdWrong_fail(){
+    public void test_when_getEmployee_idWrong_fail(){
 
         Employee employee = EmployeeFactory.createEmployee(ID_THREE, EMPLOYEE_SITA,new HashSet<>());
 
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.empty());
 
-        assertThrows(EmployeeNotFoundException.class,()->ref.getEmployeeById(employee.getId()));
+        assertThrows(EmployeeNotFoundException.class,()->underTest.getEmployeeById(employee.getId()));
     }
 
     @Test
-    public void test_WhenDeleteEmployee_Success(){
+    public void test_When_deleteEmployee_Success(){
 
         Department departmentIT = DepartmentFactory.createDepartment(DEPARTMENT_ID_TWO, DEPARTMENT_IT, READ_ONLY_FALSE, MANDATORY_FALSE);
         Department departmentHR = DepartmentFactory.createDepartment(DEPARTMENT_ID_THREE, DEPARTMENT_HR, READ_ONLY_FALSE, MANDATORY_FALSE);
@@ -128,25 +123,25 @@ public class EmployeeServiceTest {
         Employee employee = EmployeeFactory.createEmployee(ID_FOUR, EMPLOYEE_GITA, new HashSet<>(List.of(departmentIT, departmentHR)));
 
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.of(employee));
-        ref.deleteEmployee(employee.getId());
+        underTest.deleteEmployee(employee.getId());
 
         verify(employeeRepository,times(1)).deleteById(employee.getId());
 
     }
 
     @Test
-    public void test_WhenDeleteEmployeeIdIsWrong_fail(){
+    public void test_when_deleteEmployee_idWrong_fail(){
         Employee employee = EmployeeFactory.createEmployee(ID_FOUR, EMPLOYEE_GITA, new HashSet<>());
 
         when(employeeRepository.findById(employee.getId())).thenReturn(Optional.empty());
 
-        assertThrows(EmployeeNotFoundException.class,()->ref.deleteEmployee(employee.getId()));
+        assertThrows(EmployeeNotFoundException.class,()->underTest.deleteEmployee(employee.getId()));
 
         verify(employeeRepository,never()).deleteById(employee.getId());
     }
 
     @Test
-    public void test_When_UpdateEmployee_Success(){
+    public void test_when_updateEmployee_success(){
 
         Employee modifiedEmployee = EmployeeFactory.createEmployee(ID_FOUR, EMPLOYEE_GITA, new HashSet<>());
         Employee existingEmployee = EmployeeFactory.createEmployee(ID_FOUR, EMPLOYEE_SITA, new HashSet<>());
@@ -154,7 +149,7 @@ public class EmployeeServiceTest {
         when(employeeRepository.findById(existingEmployee.getId())).thenReturn(Optional.of(existingEmployee));
         when(employeeRepository.save(existingEmployee)).thenReturn(existingEmployee);
 
-        Employee updatedEmployee = ref.updateEmployee(existingEmployee.getId(), modifiedEmployee);
+        Employee updatedEmployee = underTest.updateEmployee(existingEmployee.getId(), modifiedEmployee);
 
         assertThat(modifiedEmployee.getEmpName()).isEqualTo(updatedEmployee.getEmpName());
         verify(employeeRepository,times(1)).findById(ID_FOUR);
@@ -165,11 +160,11 @@ public class EmployeeServiceTest {
     }
 
     @Test
-    public void test_When_UpdateEmployeeId_IsWrong_fail(){
+    public void test_when_updateEmployee_idWrong_fail(){
         Employee modifiedEmployee = EmployeeFactory.createEmployee(ID_FOUR, EMPLOYEE_GITA, new HashSet<>());
 
         when(employeeRepository.findById(modifiedEmployee.getId())).thenReturn(Optional.empty());
-        assertThrows(EmployeeNotFoundException.class,()->ref.updateEmployee(modifiedEmployee.getId(),modifiedEmployee));
+        assertThrows(EmployeeNotFoundException.class,()->underTest.updateEmployee(modifiedEmployee.getId(),modifiedEmployee));
 
         verify(employeeRepository,never()).save(modifiedEmployee);
 
@@ -177,7 +172,7 @@ public class EmployeeServiceTest {
 
 
     @Test
-    public void test_When_GetAllEmployees_Success(){
+    public void test_when_getAllEmployees_Success(){
 
         Employee employeeRam = EmployeeFactory.createEmployee(ID_ONE, EMPLOYEE_RAM, new HashSet<>());
         Employee employeeSham = EmployeeFactory.createEmployee(ID_TWO, EMPLOYEE_SHAM, new HashSet<>());
@@ -187,7 +182,7 @@ public class EmployeeServiceTest {
 
         when(employeeRepository.findAll()).thenReturn(employeeList);
 
-        List<Employee> allEmployees = ref.getAllEmployees();
+        List<Employee> allEmployees = underTest.getAllEmployees();
 
         assertThat(allEmployees).isEqualTo(employeeList);
         verify(employeeRepository,times(1)).findAll();

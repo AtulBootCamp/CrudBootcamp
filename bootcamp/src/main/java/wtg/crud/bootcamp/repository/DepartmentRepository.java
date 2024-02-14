@@ -10,5 +10,5 @@ import java.util.Set;
 @Repository
 public interface DepartmentRepository extends CrudRepository<Department,Integer> {
 
-    public Set<Department> findDepartmentsByMandatory(Boolean flag);
+    Set<Department> findDepartmentsByMandatory(Boolean flag);
 }

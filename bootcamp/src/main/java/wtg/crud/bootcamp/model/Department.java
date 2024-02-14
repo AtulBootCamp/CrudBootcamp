@@ -17,8 +17,8 @@ public class Department {
 	@SequenceGenerator(name = "department_sequence_generator",initialValue = 1,sequenceName = "department_sequence",allocationSize = 1)
 	private Integer id;
 
-	@Column(name = "department_name")
-	private String depttName;
+	@Column(name = "name")
+	private String departmentName;
 
 	@Column(name = "read_only")
 	private Boolean readOnly;
@@ -26,6 +26,7 @@ public class Department {
 	@Column(name = "mandatory")
 	private Boolean mandatory;
 
-	@ManyToMany(mappedBy = "departments",cascade={CascadeType.MERGE},fetch = FetchType.LAZY)
+	@ManyToMany(mappedBy = "departments",cascade={CascadeType.MERGE})
+	@JsonIgnore
 	private Set<Employee> employee = new HashSet<>();
 }

@@ -6,9 +6,9 @@ import java.util.List;
 
 public interface DepartmentService {
 
-    public Department addDepartment(Department department);
-    public Department getDepartmentById(Integer departmentId);
-    public Department updateDepartment(Integer departmentId, Department modifieddepartment);
-    public List<Department> getAllDepartments();
-    public void deleteDepartment(Integer departmentId);
+    Department addDepartment(Department department);
+    Department getDepartmentById(Integer departmentId);
+    Department updateDepartment(Integer departmentId, Department modifieddepartment);
+    List<Department> getAllDepartments();
+    void deleteDepartment(Integer departmentId);
 }

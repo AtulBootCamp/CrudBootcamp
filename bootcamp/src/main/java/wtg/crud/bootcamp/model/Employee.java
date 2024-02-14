@@ -18,10 +18,10 @@ public class Employee {
 	@SequenceGenerator(name = "employee_sequence_generator",initialValue = 1,sequenceName = "employee_sequence",allocationSize = 1)
 	private Integer id;
 
-	@Column(name = "employee_name")
+	@Column(name = "name")
 	private String empName;
 
-	@ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.LAZY)
+	@ManyToMany
 	@JoinTable(name = "map_employee_department",
 			joinColumns = @JoinColumn(name = "employee_id"),
 			inverseJoinColumns = @JoinColumn(name = "department_id"))

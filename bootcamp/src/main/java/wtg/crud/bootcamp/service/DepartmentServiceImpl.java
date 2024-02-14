@@ -31,17 +31,15 @@ public class DepartmentServiceImpl implements DepartmentService{
 
     @Override
     public void deleteDepartment(Integer departmentId) {
-        this.departmentRepository.
-            findById(departmentId).
-                map(d->{
-                    if(d.getReadOnly()){
-                        throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
-                    }
-                    return d;
-                })
-                .orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
+        Department department = this.departmentRepository.
+                findById(departmentId).
+                orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
 
-        departmentRepository.deleteById(departmentId);
+        if(department.getReadOnly()){
+            throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
+        }
+
+        this.departmentRepository.deleteById(departmentId);
     }
 
     @Override
@@ -49,19 +47,16 @@ public class DepartmentServiceImpl implements DepartmentService{
 
         Department departmentInDB = this.departmentRepository.
                 findById(departmentId).
-                map(d -> {
-                    if (d.getReadOnly()) {
-                        throw new DepartmentIsReadOnlyException("This department is Read-only, can't be deleted");
-                    }
-                    return d;
-                })
-                .orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
+                orElseThrow(() -> new DepartmentNotFoundException("Department Id " + departmentId + " is not valid"));
 
-        departmentInDB.setDepttName(modifieddepartment.getDepttName());
+        if(departmentInDB.getReadOnly()){
+            throw new DepartmentIsReadOnlyException("This department is Read-only, can't be updated");
+        }
+        departmentInDB.setDepartmentName(modifieddepartment.getDepartmentName());
         departmentInDB.setMandatory(modifieddepartment.getMandatory());
         departmentInDB.setReadOnly(modifieddepartment.getReadOnly());
 
-        return this.departmentRepository.save(departmentInDB);
+        return this.departmentRepository.save(modifieddepartment);
     }
 
     @Override
