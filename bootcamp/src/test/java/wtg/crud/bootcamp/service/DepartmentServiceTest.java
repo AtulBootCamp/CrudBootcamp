@@ -23,7 +23,7 @@ import wtg.crud.bootcamp.repository.DepartmentRepository;
 
 import java.util.List;
 import java.util.Optional;
-//@SpringBootTest
+
 @ExtendWith(MockitoExtension.class)
 public class DepartmentServiceTest {
 
@@ -49,8 +49,7 @@ public class DepartmentServiceTest {
     private DepartmentServiceImpl concreateRef;
 
     @BeforeEach
-    public void setUp(){
-        MockitoAnnotations.initMocks(this);
+    public void setUp(){        
         concreateRef=new DepartmentServiceImpl(departmentRepository);
         underTest=concreateRef;
     }
